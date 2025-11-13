@@ -1,64 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pondering Pond</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: linear-gradient(to bottom, #fffaf0, #fff6e9);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+<canvas id="pondCanvas"></canvas>
+<script>
+  const canvas = document.getElementById("pondCanvas");
+  const ctx = canvas.getContext("2d");
+  const pond = new Image();
+  pond.src = "9c7f8f38-fc15-4bf9-885c-348e7d9a2190.png"; // your uploaded pond image
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  pond.onload = () => {
+    animate();
+  };
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const { width, height } = canvas;
+
+    // background: light cream color
+    ctx.fillStyle = "#FFF9F0";
+    ctx.fillRect(0, 0, width, height);
+
+    // Maintain original image proportions
+    const ratio = pond.width / pond.height;
+    let pondWidth = Math.min(width * 0.5, pond.width);
+    let pondHeight = pondWidth / ratio;
+
+    if (pondHeight > height * 0.8) {
+      pondHeight = height * 0.8;
+      pondWidth = pondHeight * ratio;
     }
 
-    canvas {
-      display: block;
-    }
-  </style>
-</head>
-<body>
-  <canvas id="pondCanvas"></canvas>
+    // Floating side position (slightly left)
+    const offsetX = width * 0.25;
+    const offsetY = height / 2 - pondHeight / 2 + Math.sin(Date.now() / 1000) * 8;
 
-  <script>
-    const canvas = document.getElementById("pondCanvas");
-    const ctx = canvas.getContext("2d");
-    let width, height, time = 0;
+    // Slight vibrant effect
+    ctx.filter = "saturate(1.2) contrast(1.05)";
+    ctx.drawImage(pond, offsetX, offsetY, pondWidth, pondHeight);
+    ctx.filter = "none";
 
-    const pond = new Image();
-    pond.src = "pond.png"; // your transparent pond drawing
-
-    function resize() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    }
-
-    window.addEventListener("resize", resize);
-    resize();
-
-    // gentle floating motion
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      time += 0.02;
-
-      const hover = Math.sin(time) * 10;
-      const pondWidth = Math.min(width * 0.6, 600);
-      const pondHeight = pondWidth * 0.75;
-
-      const x = width / 2 - pondWidth / 2;
-      const y = height / 2 - pondHeight / 2 + hover;
-
-      ctx.drawImage(pond, x, y, pondWidth, pondHeight);
-
-      requestAnimationFrame(animate);
-    }
-
-    pond.onload = animate;
-  </script>
-</body>
-</html>
+    requestAnimationFrame(animate);
+  }
+</script>
