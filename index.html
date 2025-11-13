@@ -3,7 +3,7 @@
   const canvas = document.getElementById("pondCanvas");
   const ctx = canvas.getContext("2d");
   const pond = new Image();
-  pond.src = "./images/pond.png";
+  pond.src = "9c7f8f38-fc15-4bf9-885c-348e7d9a2190.png"; // your uploaded pond image
 
   function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -17,33 +17,33 @@
     animate();
   };
 
- function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const { width, height } = canvas;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const { width, height } = canvas;
 
-  // background: light cream color
-  ctx.fillStyle = "#FFF9F0";
-  ctx.fillRect(0, 0, width, height);
+    // background: light cream color
+    ctx.fillStyle = "#FFF9F0";
+    ctx.fillRect(0, 0, width, height);
 
-  // Maintain original image proportions
-  const ratio = pond.width / pond.height;
-  let pondWidth = Math.min(width * 0.5, pond.width);
-  let pondHeight = pondWidth / ratio;
+    // Maintain original image proportions
+    const ratio = pond.width / pond.height;
+    let pondWidth = Math.min(width * 0.5, pond.width);
+    let pondHeight = pondWidth / ratio;
 
-  if (pondHeight > height * 0.8) {
-    pondHeight = height * 0.8;
-    pondWidth = pondHeight * ratio;
+    if (pondHeight > height * 0.8) {
+      pondHeight = height * 0.8;
+      pondWidth = pondHeight * ratio;
+    }
+
+    // Floating side position (slightly left)
+    const offsetX = width * 0.25;
+    const offsetY = height / 2 - pondHeight / 2 + Math.sin(Date.now() / 1000) * 8;
+
+    // Slight vibrant effect
+    ctx.filter = "saturate(1.2) contrast(1.05)";
+    ctx.drawImage(pond, offsetX, offsetY, pondWidth, pondHeight);
+    ctx.filter = "none";
+
+    requestAnimationFrame(animate);
   }
-
-  // Floating side position (more to the left)
-  const offsetX = width * 0.15; // reduced from 0.25 to 0.15
-  const offsetY = height / 2 - pondHeight / 2 + Math.sin(Date.now() / 1000) * 8;
-
-  // Slight vibrant effect
-  ctx.filter = "saturate(1.2) contrast(1.05)";
-  ctx.drawImage(pond, offsetX, offsetY, pondWidth, pondHeight);
-  ctx.filter = "none";
-
-  requestAnimationFrame(animate);
-}
 </script>
