@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Nat's Pondering Pond</title>
-<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet">
 <style>
 
 body {
-    font-family: "Patrick Hand", cursive;
-    background: #FFF9F0;
+    font-family: "Caveat", cursive;
+    background: #FFF9F0; /* Cream background */
     margin: 0;
     padding: 30px;
     text-align: center;
@@ -35,17 +35,41 @@ h1 {
 
 .pond {
     width: 100%;
+    /* Floating animation */
+    animation: float 4s ease-in-out infinite;
+    transform-origin: center;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
 }
 
 .drawing-container img {
     position: absolute;
-    width: 80px;
+    width: 100px; /* slightly bigger */
+    border: 2px solid black; /* black outline like a button */
+    border-radius: 12px;
     transform: translate(-50%, -50%) scale(0);
-    animation: pop 0.4s ease-out forwards;
+    animation: pop 0.4s ease-out forwards, float-item 4s ease-in-out infinite;
 }
 
 @keyframes pop {
     to { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Floating animation for items - slightly delayed for natural effect */
+@keyframes float-item {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1) translateY(0);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1) translateY(-8px);
+    }
 }
 
 /* Right panel tools */
@@ -71,23 +95,62 @@ h1 {
 }
 
 .color-dot {
-    width: 28px;
-    height: 28px;
+    width: 36px; /* slightly bigger */
+    height: 36px;
     border-radius: 50%;
     cursor: pointer;
+    border: 2px solid black; /* outline like a button */
+    transition: transform 0.2s;
+}
+
+.color-dot:hover {
+    transform: scale(1.2);
 }
 
 #draw-area {
     width: 240px;
     height: 240px;
-    background: white;
+    background: #FFF9F0; /* match cream background */
     border: 3px dashed #444;
+    margin-left: 10px;
 }
 
-.gallery-link {
-    margin-top: 20px;
-    display: block;
+button {
+    cursor: pointer;
+    font-family: "Caveat", cursive;
     font-size: 20px;
+    padding: 10px 20px;
+    margin-top: 15px;
+    border: 3px solid #1f4d2d; /* dark green outline */
+    border-radius: 12px;
+    background: #FFF9F0;
+    transition: transform 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* Gallery button at bottom right */
+.gallery-link {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 12px 20px;
+    font-size: 18px;
+    text-decoration: none;
+    border: 3px solid #1f4d2d;
+    border-radius: 12px;
+    background: #FFF9F0;
+    color: #1f4d2d;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.2s;
+}
+
+.gallery-link:hover {
+    transform: scale(1.05);
 }
 
 </style>
@@ -108,28 +171,28 @@ h1 {
     <!-- Right: Tools -->
     <div class="toolbox">
 
-        <h2 class="tool-title">Draw Something Into Our Pond</h2>
+        <h2 class="tool-title">Add flowers to our garden?</h2>
 
         <div class="colors-and-canvas">
 
             <div class="color-column">
-                <div class="color-dot" style="background:#1f4d2d" onclick="selectColor('#1f4d2d')"></div>
                 <div class="color-dot" style="background:#c43a3a" onclick="selectColor('#c43a3a')"></div>
-                <div class="color-dot" style="background:#444" onclick="selectColor('#444')"></div>
-                <div class="color-dot" style="background:#d8b52d" onclick="selectColor('#d8b52d')"></div>
-                <div class="color-dot" style="background:#e1e1e1" onclick="selectColor('#e1e1e1')"></div>
+                <div class="color-dot" style="background:#f57c00" onclick="selectColor('#f57c00')"></div>
+                <div class="color-dot" style="background:#f9d66b" onclick="selectColor('#f9d66b')"></div>
+                <div class="color-dot" style="background:#f9a7c1" onclick="selectColor('#f9a7c1')"></div>
+                <div class="color-dot" style="background:#1f4d2d" onclick="selectColor('#1f4d2d')"></div>
             </div>
 
             <canvas id="draw-area"></canvas>
 
         </div>
 
-        <button onclick="addToPond()">Add to Pond</button>
-
-        <a href="gallery.html" class="gallery-link">Visit Lost & Found Gallery</a>
+        <button onclick="addToPond()">🌱 Plant</button>
 
     </div>
 </div>
+
+<a href="gallery.html" class="gallery-link">🖼️ See flower gallery</a>
 
 <script>
 // DRAWING LOGIC
@@ -152,7 +215,7 @@ function draw(e) {
     const rect = canvas.getBoundingClientRect();
     ctx.fillStyle = currentColor;
     ctx.beginPath();
-    ctx.arc(e.clientX - rect.left, e.clientY - rect.top, 4, 0, Math.PI * 2);
+    ctx.arc(e.clientX - rect.left, e.clientY - rect.top, 6, 0, Math.PI * 2); // slightly bigger
     ctx.fill();
 }
 
@@ -188,6 +251,8 @@ async function loadPondItems() {
             img.src = item.img;
             img.style.left = item.x + "%";
             img.style.top = item.y + "%";
+            // Add slight delay variation to floating animation for natural effect
+            img.style.animationDelay = `${(i % 5) * 0.2}s`;
             container.appendChild(img);
         }, i * 250);
     });
