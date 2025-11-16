@@ -1,57 +1,81 @@
-<canvas id="pondCanvas"></canvas>
-<script>
-window.onload = () => {
-  const canvas = document.getElementById("pondCanvas");
-  const ctx = canvas.getContext("2d");
-  const pond = new Image();
-  
-  // Use the absolute path to ensure it loads on GitHub Pages
-  pond.src = "https://natdaexplorer.github.io/ponderingpond/pond.png";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pondering Pond</title>
+  <style>
+    /* Make canvas fill the screen */
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background-color: #FFF9F0; /* Light cream background */
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="pondCanvas"></canvas>
+  <script>
+    window.onload = () => {
+      const canvas = document.getElementById("pondCanvas");
+      const ctx = canvas.getContext("2d");
+      const pond = new Image();
 
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+      // Use local image in root folder
+      pond.src = "./pond.png";
 
-  window.addEventListener("resize", resizeCanvas);
-  resizeCanvas();
+      pond.onload = () => {
+        console.log("Pond loaded successfully!");
+        animate();
+      };
 
-  pond.onload = () => {
-    console.log("Pond loaded successfully!");
-    animate();
-  };
+      pond.onerror = () => {
+        console.error("Failed to load pond image.");
+      };
 
-  pond.onerror = () => {
-    console.error("Failed to load pond image. Check the file path.");
-  };
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
 
- function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const { width, height } = canvas;
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
 
-  // Background: light cream color
-  ctx.fillStyle = "#FFF9F0";
-  ctx.fillRect(0, 0, width, height);
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const { width, height } = canvas;
 
-  // Maintain original image proportions
-  const ratio = pond.width / pond.height;
-  let pondWidth = Math.min(width * 0.5, pond.width);
-  let pondHeight = pondWidth / ratio;
+        // Background is already set in CSS, but optional to fill here too
+        ctx.fillStyle = "#FFF9F0";
+        ctx.fillRect(0, 0, width, height);
 
-  if (pondHeight > height * 0.8) {
-    pondHeight = height * 0.8;
-    pondWidth = pondHeight * ratio;
-  }
+        // Maintain pond image aspect ratio
+        const ratio = pond.width / pond.height;
+        let pondWidth = Math.min(width * 0.5, pond.width);
+        let pondHeight = pondWidth / ratio;
 
-  // Floating side position (more to the left)
-  const offsetX = width * 0.15;
-  const offsetY = height / 2 - pondHeight / 2 + Math.sin(Date.now() / 700) * 12;
+        if (pondHeight > height * 0.8) {
+          pondHeight = height * 0.8;
+          pondWidth = pondHeight * ratio;
+        }
 
-  // Slight vibrant effect
-  ctx.filter = "saturate(1.2) contrast(1.05)";
-  ctx.drawImage(pond, offsetX, offsetY, pondWidth, pondHeight);
-  ctx.filter = "none";
+        // Floating slightly left, slightly higher, slightly faster
+        const offsetX = width * 0.15;
+        const offsetY = height / 2 - pondHeight / 2 + Math.sin(Date.now() / 700) * 12;
 
-  requestAnimationFrame(animate);
-}
-</script>
+        // Slight vibrant effect
+        ctx.filter = "saturate(1.2) contrast(1.05)";
+        ctx.drawImage(pond, offsetX, offsetY, pondWidth, pondHeight);
+        ctx.filter = "none";
+
+        requestAnimationFrame(animate);
+      }
+    };
+  </script>
+</body>
+</html>
