@@ -7,35 +7,62 @@
 <style>
 body {
     font-family: "Delius", cursive;
-    background: #FFF9F0; /* Cream background */
+    background: #FFF9F0;
     margin: 0;
-    padding: 30px;
+    padding: 15px;
     text-align: center;
+    height: 100vh;
+    overflow: hidden; /* Prevent scrolling */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-shrink: 0;
 }
 
 h1 {
-    font-size: 48px;
+    font-size: 32px;
     color: #1f4d2d;
-    margin-bottom: 30px;
+    margin: 0;
+    text-align: left;
+    flex: 1;
 }
 
 .main-layout {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: flex-start;
-    gap: 60px;
-    margin-top: 40px;
+    gap: 30px;
+    flex: 1;
+    height: calc(100vh - 120px);
 }
 
 /* Pond Left */
 .pond-wrapper {
     position: relative;
-    width: 650px;
+    flex: 1;
+    max-width: 600px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .pond {
-    width: 100%;
-    /* Floating animation */
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
     animation: float 4s ease-in-out infinite;
     transform-origin: center;
 }
@@ -45,14 +72,14 @@ h1 {
         transform: translateY(0);
     }
     50% {
-        transform: translateY(-15px);
+        transform: translateY(-10px);
     }
 }
 
 .drawing-container img {
     position: absolute;
-    width: 100px; /* slightly bigger */
-    border: 2px solid black; /* black outline like a button */
+    width: 100px;
+    border: 2px solid black;
     border-radius: 12px;
     transform: translate(-50%, -50%) scale(0);
     animation: pop 0.4s ease-out forwards, float-item 4s ease-in-out infinite;
@@ -62,68 +89,83 @@ h1 {
     to { transform: translate(-50%, -50%) scale(1); }
 }
 
-/* Floating animation for items - slightly delayed for natural effect */
 @keyframes float-item {
     0%, 100% {
         transform: translate(-50%, -50%) scale(1) translateY(0);
     }
     50% {
-        transform: translate(-50%, -50%) scale(1) translateY(-8px);
+        transform: translate(-50%, -50%) scale(1) translateY(-6px);
     }
 }
 
 /* Right panel tools */
 .toolbox {
-    width: 300px;
-    text-align: center;
+    width: 280px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .tool-title {
-    font-size: 26px;
-    margin-bottom: 20px;
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #1f4d2d;
 }
 
 .colors-and-canvas {
     display: flex;
-    gap: 18px;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
 }
 
-.color-column {
+.color-row {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    justify-content: center;
+    gap: 8px;
 }
 
 .color-dot {
-    width: 36px; /* slightly bigger */
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     cursor: pointer;
-    border: 2px solid black; /* outline like a button */
+    border: 2px solid black;
     transition: transform 0.2s;
 }
 
 .color-dot:hover {
-    transform: scale(1.2);
+    transform: scale(1.15);
 }
 
 #draw-area {
-    width: 240px;
-    height: 240px;
-    background: #FFF9F0; /* match cream background */
+    width: 200px;
+    height: 200px;
+    background: #FFF9F0;
     border: 3px dashed #444;
-    margin-left: 10px;
     cursor: crosshair;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    width: 100%;
 }
 
 button {
     cursor: pointer;
     font-family: "Delius", cursive;
-    font-size: 18px; /* Smaller font size */
-    padding: 8px 16px; /* Smaller padding */
-    margin-top: 15px;
-    border: 3px solid #1f4d2d; /* dark green outline */
-    border-radius: 12px;
+    font-size: 13px;
+    padding: 5px 10px;
+    border: 2px solid #1f4d2d;
+    border-radius: 6px;
     background: #FFF9F0;
     transition: transform 0.2s, background 0.3s;
 }
@@ -133,95 +175,81 @@ button:hover {
     background: #e8f4ea;
 }
 
-/* Gallery button at bottom right */
-.gallery-link {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    padding: 10px 16px; /* Smaller padding */
-    font-size: 18px; /* Smaller font size */
-    text-decoration: none;
-    border: 3px solid #1f4d2d;
-    border-radius: 12px;
-    background: #FFF9F0;
-    color: #1f4d2d;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: transform 0.2s, background 0.3s;
-}
-
-.gallery-link:hover {
-    transform: scale(1.05);
-    background: #e8f4ea;
-}
-
-/* Clear button */
 .clear-btn {
     background: #ffe6e6;
-    margin-left: 10px;
 }
 
 .clear-btn:hover {
     background: #ffcccc;
 }
 
-.button-group {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 15px;
+.gallery-link {
+    padding: 6px 12px;
+    font-size: 14px;
+    text-decoration: none;
+    border: 2px solid #1f4d2d;
+    border-radius: 8px;
+    background: #FFF9F0;
+    color: #1f4d2d;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.2s, background 0.3s;
+    flex-shrink: 0;
+}
+
+.gallery-link:hover {
+    transform: scale(1.05);
+    background: #e8f4ea;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Nat's Pondering Pond</h1>
-
-<div class="main-layout">
-
-    <!-- Left: Pond -->
-    <div class="pond-wrapper">
-        <img src="pond.png" class="pond" alt="Pond">
-        <div id="pondDrawings" class="drawing-container"></div>
+<div class="container">
+    <div class="header">
+        <h1>Nat's Pondering Pond</h1>
+        <a href="gallery.html" class="gallery-link">🖼️ Gallery of Lost & Found</a>
     </div>
 
-    <!-- Right: Tools -->
-    <div class="toolbox">
+    <div class="main-layout">
+        <!-- Left: Pond -->
+        <div class="pond-wrapper">
+            <img src="pond.png" class="pond" alt="Pond">
+            <div id="pondDrawings" class="drawing-container"></div>
+        </div>
 
-        <h2 class="tool-title">Drop Something Into Our Pond?</h2>
+        <!-- Right: Tools -->
+        <div class="toolbox">
+            <h2 class="tool-title">Drop Something Into Our Pond?</h2>
 
-        <div class="colors-and-canvas">
+            <div class="colors-and-canvas">
+                <div class="color-row">
+                    <div class="color-dot" style="background:#c43a3a" onclick="selectColor('#c43a3a')"></div>
+                    <div class="color-dot" style="background:#f57c00" onclick="selectColor('#f57c00')"></div>
+                    <div class="color-dot" style="background:#f9d66b" onclick="selectColor('#f9d66b')"></div>
+                    <div class="color-dot" style="background:#f9a7c1" onclick="selectColor('#f9a7c1')"></div>
+                    <div class="color-dot" style="background:#1f4d2d" onclick="selectColor('#1f4d2d')"></div>
+                </div>
 
-            <div class="color-column">
-                <div class="color-dot" style="background:#c43a3a" onclick="selectColor('#c43a3a')"></div>
-                <div class="color-dot" style="background:#f57c00" onclick="selectColor('#f57c00')"></div>
-                <div class="color-dot" style="background:#f9d66b" onclick="selectColor('#f9d66b')"></div>
-                <div class="color-dot" style="background:#f9a7c1" onclick="selectColor('#f9a7c1')"></div>
-                <div class="color-dot" style="background:#1f4d2d" onclick="selectColor('#1f4d2d')"></div>
+                <canvas id="draw-area"></canvas>
+
+                <div class="button-group">
+                    <button onclick="addToPond()">🐟 Add to Pond</button>
+                    <button class="clear-btn" onclick="clearCanvas()">Clear</button>
+                </div>
             </div>
-
-            <canvas id="draw-area"></canvas>
-
         </div>
-
-        <div class="button-group">
-            <button onclick="addToPond()">🐟 Add to Pond</button>
-            <button class="clear-btn" onclick="clearCanvas()">Clear Canvas</button>
-        </div>
-
     </div>
 </div>
-
-<a href="gallery.html" class="gallery-link">🖼️ Gallery of Lost & Found</a>
 
 <script>
 // DRAWING LOGIC
 const canvas = document.getElementById("draw-area");
 const ctx = canvas.getContext("2d");
-canvas.width = 240;
-canvas.height = 240;
+canvas.width = 200;
+canvas.height = 200;
 
 // Set initial canvas background
 ctx.fillStyle = '#FFF9F0';
@@ -237,9 +265,6 @@ function selectColor(c) {
 canvas.addEventListener("mousedown", startDrawing);
 canvas.addEventListener("mouseup", stopDrawing);
 canvas.addEventListener("mousemove", draw);
-canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
-canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
-canvas.addEventListener("touchend", handleTouchEnd);
 
 function startDrawing(e) {
     drawing = true;
@@ -255,17 +280,10 @@ function draw(e) {
     if (!drawing) return;
     
     const rect = canvas.getBoundingClientRect();
-    let x, y;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
     
-    if (e.type.includes('touch')) {
-        x = e.touches[0].clientX - rect.left;
-        y = e.touches[0].clientY - rect.top;
-    } else {
-        x = e.clientX - rect.left;
-        y = e.clientY - rect.top;
-    }
-    
-    ctx.lineWidth = 12;
+    ctx.lineWidth = 10;
     ctx.lineCap = 'round';
     ctx.strokeStyle = currentColor;
     
@@ -273,33 +291,6 @@ function draw(e) {
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(x, y);
-}
-
-// Touch event handlers
-function handleTouchStart(e) {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const mouseEvent = new MouseEvent("mousedown", {
-        clientX: touch.clientX,
-        clientY: touch.clientY
-    });
-    canvas.dispatchEvent(mouseEvent);
-}
-
-function handleTouchMove(e) {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const mouseEvent = new MouseEvent("mousemove", {
-        clientX: touch.clientX,
-        clientY: touch.clientY
-    });
-    canvas.dispatchEvent(mouseEvent);
-}
-
-function handleTouchEnd(e) {
-    e.preventDefault();
-    const mouseEvent = new MouseEvent("mouseup", {});
-    canvas.dispatchEvent(mouseEvent);
 }
 
 // Clear canvas function
@@ -312,8 +303,6 @@ function clearCanvas() {
 async function addToPond() {
     const imgData = canvas.toDataURL();
     
-    // For demo purposes, we'll store in localStorage
-    // In a real app, this would be sent to your backend
     let items = JSON.parse(localStorage.getItem('pondItems') || '[]');
     items.push({
         img: imgData,
@@ -330,8 +319,6 @@ async function addToPond() {
 
 // LOAD POND ITEMS
 async function loadPondItems() {
-    // For demo, load from localStorage
-    // In a real app, this would come from your backend
     const items = JSON.parse(localStorage.getItem('pondItems') || '[]');
     const container = document.getElementById("pondDrawings");
     container.innerHTML = "";
@@ -342,7 +329,6 @@ async function loadPondItems() {
             img.src = item.img;
             img.style.left = item.x + "%";
             img.style.top = item.y + "%";
-            // Add slight delay variation to floating animation for natural effect
             img.style.animationDelay = `${(i % 5) * 0.2}s`;
             container.appendChild(img);
         }, i * 250);
