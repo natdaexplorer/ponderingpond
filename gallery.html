@@ -55,11 +55,6 @@ h1 {
     border-radius: 8px;
 }
 
-/* Remove delete button */
-.delete-btn {
-    display: none;
-}
-
 .back-link {
     position: fixed;
     bottom: 30px;
@@ -86,21 +81,6 @@ h1 {
     font-size: 28px;
     color: #666;
     margin: 40px 0;
-}
-
-/* Swipe indicator (hidden) */
-.swipe-indicator {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 20px;
-    height: 20px;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.gallery-item.swiping .swipe-indicator {
-    opacity: 0.3;
 }
 
 /* Mobile Styles for Gallery */
@@ -146,9 +126,8 @@ h1 {
 <a href="index.html" class="back-link">← Back to Pond</a>
 
 <script>
-// Swipe tracking variables
-let swipeCounts = new Map(); // Track swipe counts per item
-const SWIPES_REQUIRED = 3;   // Number of swipes needed to delete
+// Track loaded drawing IDs
+let loadedGalleryIds = new Set();
 
 // Load gallery items
 async function loadGallery() {
@@ -157,36 +136,49 @@ async function loadGallery() {
     document.getElementById("itemCount").innerText = "Number of Items: " + items.length;
 
     const grid = document.getElementById("galleryGrid");
-    grid.innerHTML = "";
+    
+    // Clear and reload all items to ensure sync
+    grid.innerHTML = '';
+    loadedGalleryIds.clear();
 
     if (items.length === 0) {
         grid.innerHTML = '<div class="empty-message">The gallery is empty. Add some drawings to the pond first!</div>';
         return;
     }
 
+    // Load all items with staggered animation
     items.forEach((item, index) => {
-        const box = document.createElement("div");
-        box.className = "gallery-item";
-        box.setAttribute('data-index', index);
-        
-        // Initialize swipe count for this item
-        if (!swipeCounts.has(index)) {
-            swipeCounts.set(index, 0);
-        }
-        
-        box.innerHTML = `
-            <img src="${item.img}" alt="User drawing">
-            <div class="swipe-indicator">👆</div>
-        `;
-        
-        // Add touch events for mobile swipe detection
-        setupSwipeDetection(box, index);
-        grid.appendChild(box);
+        setTimeout(() => {
+            const box = document.createElement("div");
+            box.className = "gallery-item";
+            box.setAttribute('data-id', item.id);
+            
+            box.innerHTML = `
+                <img src="${item.img}" alt="User drawing">
+            `;
+            
+            // Add click handler for desktop deletion (3 clicks)
+            if (window.innerWidth > 768) {
+                let clickCount = 0;
+                box.addEventListener('click', function() {
+                    clickCount++;
+                    if (clickCount >= 3) {
+                        deleteItem(item.id);
+                        clickCount = 0;
+                    }
+                });
+            }
+            
+            // Add touch events for mobile swipe detection
+            setupSwipeDetection(box, item.id);
+            grid.appendChild(box);
+            loadedGalleryIds.add(item.id);
+        }, index * 300);
     });
 }
 
 // Setup swipe detection for gallery items
-function setupSwipeDetection(element, index) {
+function setupSwipeDetection(element, id) {
     let startX = 0;
     let currentX = 0;
     let isSwiping = false;
@@ -195,7 +187,6 @@ function setupSwipeDetection(element, index) {
     element.addEventListener('touchstart', (e) => {
         startX = e.touches[0].clientX;
         isSwiping = true;
-        element.classList.add('swiping');
     });
     
     element.addEventListener('touchmove', (e) => {
@@ -212,24 +203,22 @@ function setupSwipeDetection(element, index) {
             
             // Increment swipe count
             swipeCount++;
-            swipeCounts.set(index, swipeCount);
             
             // Visual feedback (subtle)
             element.style.transform = `scale(${1 - (swipeCount * 0.05)})`;
             
             // Check if reached required swipes
-            if (swipeCount >= SWIPES_REQUIRED) {
-                deleteItem(index);
+            if (swipeCount >= 3) {
+                deleteItem(id);
             }
         }
     });
     
     element.addEventListener('touchend', () => {
         isSwiping = false;
-        element.classList.remove('swiping');
         // Reset transform after a delay
         setTimeout(() => {
-            if (swipeCount < SWIPES_REQUIRED) {
+            if (swipeCount < 3) {
                 element.style.transform = 'scale(1)';
             }
         }, 300);
@@ -237,51 +226,36 @@ function setupSwipeDetection(element, index) {
 }
 
 // Delete item function
-async function deleteItem(index) {
+async function deleteItem(id) {
     let items = JSON.parse(localStorage.getItem('pondItems') || '[]');
     
     // Remove the item
-    items.splice(index, 1);
+    items = items.filter(item => item.id !== id);
     localStorage.setItem('pondItems', JSON.stringify(items));
     
-    // Reset swipe count for this index
-    swipeCounts.delete(index);
+    // Remove from loaded IDs
+    loadedGalleryIds.delete(id);
     
-    // Reload gallery
-    loadGallery();
+    // Remove from DOM
+    const element = document.querySelector(`[data-id="${id}"]`);
+    if (element) {
+        element.remove();
+    }
+    
+    // Update count
+    document.getElementById("itemCount").innerText = "Number of Items: " + items.length;
+    
+    // Show empty message if no items left
+    if (items.length === 0) {
+        document.getElementById("galleryGrid").innerHTML = '<div class="empty-message">The gallery is empty. Add some drawings to the pond first!</div>';
+    }
 }
 
-// Also support mouse clicks for desktop testing (3 clicks to delete)
-if (window.innerWidth > 768) {
-    document.addEventListener('click', (e) => {
-        const galleryItem = e.target.closest('.gallery-item');
-        if (galleryItem) {
-            const index = parseInt(galleryItem.getAttribute('data-index'));
-            let currentCount = swipeCounts.get(index) || 0;
-            currentCount++;
-            swipeCounts.set(index, currentCount);
-            
-            // Visual feedback
-            galleryItem.style.transform = `scale(${1 - (currentCount * 0.05)})`;
-            
-            if (currentCount >= SWIPES_REQUIRED) {
-                deleteItem(index);
-            } else {
-                // Reset transform after a delay if not deleted
-                setTimeout(() => {
-                    galleryItem.style.transform = 'scale(1)';
-                }, 300);
-            }
-        }
-    });
-}
-
-// Auto-refresh gallery every 3 seconds to show new drawings
-setInterval(loadGallery, 3000);
+// Auto-refresh gallery every 2 seconds to show new drawings
+setInterval(loadGallery, 2000);
 
 // Initial load
 loadGallery();
 </script>
-
 </body>
 </html>
