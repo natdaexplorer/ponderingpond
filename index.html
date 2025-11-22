@@ -929,6 +929,7 @@ function getRandomPondPosition(existingItems = []) {
     };
 }
     
+    
 // FIREBASE FUNCTIONS - WITH LAZY LOADING AND CACHE
 async function loadPondItems() {
     showLoadingSpinner();
@@ -1135,12 +1136,13 @@ function addSingleDrawing(item) {
     img.setAttribute('data-id', item.id);
     img.style.pointerEvents = 'auto';
     img.style.cursor = 'pointer';
+    img.style.transition = 'transform 0.6s ease'; // Add transition for animation
     
     // Click animation function
     function animateClick() {
         img.style.transform = 'translate(-50%, -50%) scale(1.4)'; // Grow to 140%
         setTimeout(() => {
-            img.style.transform = 'translate(-50%, -50%) scale(1)'; // Return to normal after 0.6 seconds
+            img.style.transform = 'translate(-50%, -50%) scale(1)'; // Return to normal
         }, 600);
     }
     
