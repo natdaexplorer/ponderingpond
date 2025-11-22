@@ -340,9 +340,9 @@ button:hover {
     }
     
     .header {
-        padding: 10px 0; /* Reduced padding */
+        padding: 10px 0;
         flex-shrink: 0;
-        height: 10vh; /* Reduced height */
+        height: 10vh;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -364,7 +364,7 @@ button:hover {
         width: 100%;
         position: relative;
         overflow: hidden;
-        height: 90vh; /* Increased height */
+        height: 90vh;
     }
     
     .pond-section {
@@ -374,8 +374,8 @@ button:hover {
         align-items: center;
         justify-content: center;
         padding: 0;
-        height: 60vh; /* Increased height */
-        margin-top: 10px; /* Added top margin to push pond down */
+        height: 60vh;
+        margin-top: 10px;
     }
     
     .pond-wrapper {
@@ -387,12 +387,12 @@ button:hover {
         justify-content: center;
         animation: float 4s ease-in-out infinite;
         transform-origin: center;
-        margin-left: 8px; /* Move pond slightly to the right */
+        margin-left: 15px; /* Increased right shift */
     }
     
     .pond {
         width: 100%;
-        max-width: 720px; /* Slightly larger pond */
+        max-width: 720px;
         pointer-events: none;
     }
     
@@ -417,7 +417,7 @@ button:hover {
         align-items: center;
     }
     
-    /* Mobile buttons container - positioned lower */
+    /* Mobile buttons container - positioned higher */
     .mobile-buttons-container {
         display: flex;
         flex-direction: column;
@@ -427,9 +427,9 @@ button:hover {
         margin: 0 auto;
         flex-shrink: 0;
         padding: 15px 20px;
-        height: 30vh; /* Reduced height */
-        justify-content: flex-end; /* Push buttons to bottom */
-        margin-bottom: 15px; /* Added bottom margin to push buttons down */
+        height: 30vh;
+        justify-content: flex-start; /* Buttons at top of container */
+        margin-bottom: 5px; /* Reduced bottom margin to move buttons up */
     }
     
     .mobile-main-button {
@@ -553,19 +553,19 @@ button:hover {
     }
     
     .pond {
-        max-width: 740px; /* Slightly larger on small screens */
+        max-width: 740px;
     }
     
     .pond-wrapper {
-        margin-left: 5px; /* Slightly less shift on very small screens */
+        margin-left: 10px; /* Slightly less shift on very small screens */
     }
     
     .pond-section {
-        margin-top: 8px; /* Slightly less margin on small screens */
+        margin-top: 8px;
     }
     
     .mobile-buttons-container {
-        margin-bottom: 10px; /* Slightly less bottom margin on small screens */
+        margin-bottom: 8px; /* Slightly less bottom margin on small screens */
     }
 }
     
