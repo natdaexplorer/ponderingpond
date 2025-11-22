@@ -5,6 +5,9 @@
 <title>Nat's Pondering Pond</title>
 <link href="https://fonts.googleapis.com/css2?family=Delius&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<!-- Add Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
 * {
     box-sizing: border-box;
@@ -496,6 +499,11 @@ button:hover {
     .adding-message {
         font-size: 14px;
     }
+    
+    /* Show Instagram warning on mobile */
+    .instagram-warning {
+        display: block;
+    }
 }
 
 @media (max-width: 480px) {
@@ -633,6 +641,21 @@ button:hover {
 <a href="gallery.html" class="gallery-link">🖼️ Gallery of Lost & Found</a>
 
 <script>
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyCxDWwZX-tvvHMMUilSKzlIoiOKkbONA0M",
+    authDomain: "nats-pondering-pond.firebaseapp.com",
+    projectId: "nats-pondering-pond",
+    storageBucket: "nats-pondering-pond.firebasestorage.app",
+    messagingSenderId: "44235660914",
+    appId: "1:44235660914:web:82778716501a6d460a6ceb",
+    measurementId: "G-E7K9N3YD8S"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 // Detect Instagram browser
 function isInstagramBrowser() {
     return /Instagram/.test(navigator.userAgent);
@@ -863,6 +886,43 @@ function getRandomPondPosition(existingItems = []) {
     };
 }
 
+// FIREBASE FUNCTIONS
+async function loadPondItems() {
+    try {
+        const snapshot = await db.collection('drawings').orderBy('timestamp', 'desc').get();
+        const container = document.getElementById("pondDrawings");
+        
+        snapshot.forEach(doc => {
+            const item = doc.data();
+            if (!loadedDrawingIds.has(item.id)) {
+                addSingleDrawing(item);
+            }
+        });
+    } catch (error) {
+        console.error('Error loading drawings:', error);
+    }
+}
+
+// Real-time listener for new drawings
+function setupRealTimeListener() {
+    db.collection('drawings')
+        .orderBy('timestamp', 'desc')
+        .onSnapshot((snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === 'added') {
+                    const item = change.doc.data();
+                    if (!loadedDrawingIds.has(item.id)) {
+                        addSingleDrawing(item);
+                    }
+                }
+                if (change.type === 'removed') {
+                    const item = change.doc.data();
+                    removeDrawingFromDisplay(item.id);
+                }
+            });
+        });
+}
+
 // ADD TO POND
 async function addToPond() {
     if (isCanvasBlank()) {
@@ -908,28 +968,35 @@ async function addToPond() {
     tempCtx.putImageData(newData, 0, 0);
     const imgData = tempCanvas.toDataURL('image/png');
     
-    let items = JSON.parse(localStorage.getItem('pondItems') || '[]');
+    // Get existing items for collision detection
+    const existingItems = [];
+    const snapshot = await db.collection('drawings').get();
+    snapshot.forEach(doc => {
+        existingItems.push(doc.data());
+    });
     
     // Get position with collision detection
-    const position = getRandomPondPosition(items);
+    const position = getRandomPondPosition(existingItems);
     
     const newItem = {
         id: generateDrawingId(),
         img: imgData,
         x: position.x,
         y: position.y,
-        timestamp: Date.now()
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
     };
     
-    items.push(newItem);
-    localStorage.setItem('pondItems', JSON.stringify(items));
-    clearCanvas();
-    addSingleDrawing(newItem);
-    
-    if (window.innerWidth <= 768) {
-        setTimeout(() => {
-            hideDrawingTools();
-        }, 1500);
+    try {
+        await db.collection('drawings').doc(newItem.id).set(newItem);
+        clearCanvas();
+        
+        if (window.innerWidth <= 768) {
+            setTimeout(() => {
+                hideDrawingTools();
+            }, 1500);
+        }
+    } catch (error) {
+        console.error('Error adding drawing:', error);
     }
 }
 
@@ -946,45 +1013,55 @@ function addSingleDrawing(item) {
     img.style.pointerEvents = 'auto';
     img.style.cursor = 'pointer';
     
+    // Triple tap/click deletion for all devices
+    let tapCount = 0;
+    let lastTapTime = 0;
+    
+    function handleDeletion(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const currentTime = new Date().getTime();
+        if (currentTime - lastTapTime > 1000) {
+            tapCount = 0;
+        }
+        
+        tapCount++;
+        lastTapTime = currentTime;
+        
+        if (tapCount >= 3) {
+            deleteDrawing(item.id);
+            tapCount = 0;
+        }
+    }
+    
+    // Add both click and touch events for all devices
+    img.addEventListener('click', handleDeletion);
+    img.addEventListener('touchstart', handleDeletion, { passive: false });
+    
     container.appendChild(img);
     loadedDrawingIds.add(item.id);
 }
 
-// LOAD POND ITEMS
-async function loadPondItems() {
-    const items = JSON.parse(localStorage.getItem('pondItems') || '[]');
-    const container = document.getElementById("pondDrawings");
-    const newItems = items.filter(item => !loadedDrawingIds.has(item.id));
-    
-    // Load all drawings immediately without staggered animation
-    newItems.forEach(item => {
-        addSingleDrawing(item);
-    });
+function removeDrawingFromDisplay(id) {
+    const img = document.querySelector(`img[data-id="${id}"]`);
+    if (img) {
+        img.style.transition = 'opacity 0.3s, transform 0.3s';
+        img.style.opacity = '0';
+        img.style.transform = 'translate(-50%, -50%) scale(0)';
+        setTimeout(() => {
+            img.remove();
+        }, 300);
+    }
+    loadedDrawingIds.delete(id);
 }
 
-function syncDrawings() {
-    const items = JSON.parse(localStorage.getItem('pondItems') || '[]');
-    const container = document.getElementById("pondDrawings");
-    const currentDisplayedIds = new Set();
-    
-    container.querySelectorAll('img[data-id]').forEach(img => {
-        currentDisplayedIds.add(img.getAttribute('data-id'));
-    });
-    
-    container.querySelectorAll('img[data-id]').forEach(img => {
-        const id = img.getAttribute('data-id');
-        const existsInStorage = items.some(item => item.id === id);
-        if (!existsInStorage) {
-            img.remove();
-            loadedDrawingIds.delete(id);
-        }
-    });
-    
-    items.forEach(item => {
-        if (!currentDisplayedIds.has(item.id)) {
-            addSingleDrawing(item);
-        }
-    });
+async function deleteDrawing(id) {
+    try {
+        await db.collection('drawings').doc(id).delete();
+    } catch (error) {
+        console.error('Error deleting drawing:', error);
+    }
 }
 
 function showDrawingTools() {
@@ -1001,18 +1078,14 @@ function hideDrawingTools() {
 
 window.addEventListener('resize', setupCanvas);
 
+// Initialize
 document.addEventListener('DOMContentLoaded', function() {
     setupCanvas();
     loadPondItems();
+    setupRealTimeListener();
 });
 
-setInterval(syncDrawings, 1000);
-
-document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) syncDrawings();
-});
-
-window.addEventListener('focus', syncDrawings);
+window.addEventListener('focus', loadPondItems);
 </script>
 </body>
 </html>
