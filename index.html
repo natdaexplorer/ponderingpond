@@ -905,17 +905,45 @@ function addSingleDrawing(item) {
     img.style.top = item.y + "%";
     img.setAttribute('data-id', item.id);
     
-    // Add click handler for desktop deletion (3 clicks)
-    if (window.innerWidth > 768) {
-        let clickCount = 0;
-        img.addEventListener('click', function() {
-            clickCount++;
-            if (clickCount >= 3) {
-                deleteDrawing(item.id);
-                clickCount = 0;
-            }
-        });
-    }
+    // Add click/tap handler for deletion (3 clicks/taps) - FOR BOTH DESKTOP AND MOBILE
+    let clickCount = 0;
+    let lastClickTime = 0;
+    
+    img.addEventListener('click', function(e) {
+        const currentTime = new Date().getTime();
+        
+        // Reset click count if it's been more than 1 second since last click
+        if (currentTime - lastClickTime > 1000) {
+            clickCount = 0;
+        }
+        
+        clickCount++;
+        lastClickTime = currentTime;
+        
+        if (clickCount >= 3) {
+            deleteDrawing(item.id);
+            clickCount = 0;
+        }
+    });
+    
+    // Also add touch event for mobile to ensure it works reliably
+    img.addEventListener('touchstart', function(e) {
+        e.preventDefault(); // Prevent default touch behavior
+        const currentTime = new Date().getTime();
+        
+        // Reset click count if it's been more than 1 second since last tap
+        if (currentTime - lastClickTime > 1000) {
+            clickCount = 0;
+        }
+        
+        clickCount++;
+        lastClickTime = currentTime;
+        
+        if (clickCount >= 3) {
+            deleteDrawing(item.id);
+            clickCount = 0;
+        }
+    });
     
     container.appendChild(img);
     loadedDrawingIds.add(item.id);
