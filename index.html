@@ -340,17 +340,18 @@ button:hover {
     }
     
     .header {
-        padding: 8px 0; /* Reduced padding */
+        padding: 15px 0;
         flex-shrink: 0;
-        height: 8vh; /* Reduced height */
+        height: 12vh;
         display: flex;
         align-items: center;
         justify-content: center;
     }
     
     h1 {
-        font-size: 30px;
+        font-size: 36px;
         margin: 0;
+        text-align: center;
         font-weight: bold;
     }
     
@@ -363,7 +364,7 @@ button:hover {
         width: 100%;
         position: relative;
         overflow: hidden;
-        height: 92vh; /* Increased main content height */
+        height: 88vh;
     }
     
     .pond-section {
@@ -373,25 +374,25 @@ button:hover {
         align-items: center;
         justify-content: center;
         padding: 0;
-        height: 65vh; /* Increased height for larger pond */
-        margin-top: 0; /* Remove top margin */
+        height: 55vh;
     }
     
     .pond-wrapper {
+        position: relative;
         width: 100%;
         height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding-top: 20px; /* Add padding to push pond down */
+        animation: float 4s ease-in-out infinite;
+        transform-origin: center;
+        margin-left: 8px; /* Move pond slightly to the right */
     }
     
     .pond {
-        max-width: 95%; /* Larger pond image */
-        width: auto;
-        height: auto;
-        max-height: 90%; /* Allow more height */
-        object-fit: contain;
+        width: 100%;
+        max-width: 720px; /* Slightly larger pond */
+        pointer-events: none;
     }
     
     .drawing-container img {
@@ -415,7 +416,7 @@ button:hover {
         align-items: center;
     }
     
-    /* Mobile buttons container - positioned lower */
+    /* Mobile buttons container - positioned higher */
     .mobile-buttons-container {
         display: flex;
         flex-direction: column;
@@ -425,15 +426,14 @@ button:hover {
         margin: 0 auto;
         flex-shrink: 0;
         padding: 15px 20px;
-        height: 27vh; /* Reduced height */
-        justify-content: flex-start; /* Start from top of container */
-        margin-top: 10px; /* Space between pond and buttons */
+        height: 33vh;
+        justify-content: flex-start;
     }
     
     .mobile-main-button {
         font-family: "Delius", cursive;
-        font-size: 14px;
-        padding: 12px 16px;
+        font-size: 15px;
+        padding: 14px 18px;
         border: 2px solid #1f4d2d;
         border-radius: 10px;
         background: #FFF9F0;
@@ -524,12 +524,12 @@ button:hover {
 
 @media (max-width: 480px) {
     h1 {
-        font-size: 26px;
+        font-size: 24px;
     }
     
     .mobile-main-button {
-        font-size: 13px;
-        padding: 10px 14px;
+        font-size: 14px;
+        padding: 12px 16px;
     }
     
     #draw-area {
@@ -551,13 +551,14 @@ button:hover {
     }
     
     .pond {
-        max-width: 98%; /* Even larger on very small screens */
+        max-width: 740px; /* Slightly larger on small screens */
     }
     
     .pond-wrapper {
-        padding-top: 15px; /* Slightly less padding on small screens */
+        margin-left: 5px; /* Slightly less shift on very small screens */
     }
 }
+    
 /* Close button for mobile */
 .close-tools {
     position: absolute;
