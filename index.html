@@ -340,16 +340,16 @@ button:hover {
     }
     
     .header {
-        padding: 15px 0; /* Increased padding */
+        padding: 12px 0; /* Slightly reduced padding */
         flex-shrink: 0;
-        height: 12vh;
+        height: 10vh; /* Reduced height */
         display: flex;
         align-items: center;
         justify-content: center;
     }
     
     h1 {
-        font-size: 32px; /* Increased from 28px */
+        font-size: 30px; /* Slightly smaller than before but bigger than original */
         margin: 0;
         font-weight: bold;
     }
@@ -363,7 +363,7 @@ button:hover {
         width: 100%;
         position: relative;
         overflow: hidden;
-        height: 88vh;
+        height: 90vh; /* Increased height */
     }
     
     .pond-section {
@@ -373,8 +373,8 @@ button:hover {
         align-items: center;
         justify-content: center;
         padding: 0;
-        height: 50vh; /* Adjusted for better centering */
-        margin-top: 10px; /* Added margin to center pond */
+        height: 60vh; /* Increased height for larger pond */
+        margin-top: 5px;
     }
     
     .pond-wrapper {
@@ -386,7 +386,7 @@ button:hover {
     }
     
     .pond {
-        max-width: 85%; /* Slightly reduced for better centering */
+        max-width: 92%; /* Increased back to original size */
         width: auto;
         height: auto;
         max-height: 100%;
@@ -414,25 +414,25 @@ button:hover {
         align-items: center;
     }
     
-    /* Mobile buttons container - positioned lower */
+    /* Mobile buttons container - positioned lower but smaller buttons */
     .mobile-buttons-container {
         display: flex;
         flex-direction: column;
-        gap: 15px; /* Increased gap */
+        gap: 12px; /* Normal gap */
         width: 100%;
         max-width: 300px;
         margin: 0 auto;
         flex-shrink: 0;
-        padding: 20px; /* Increased padding */
-        height: 38vh; /* Increased height */
-        justify-content: flex-start;
-        margin-top: 10px; /* Added margin to push buttons down */
+        padding: 15px 20px; /* Normal padding */
+        height: 30vh; /* Reduced height */
+        justify-content: flex-end; /* Push to bottom */
+        margin-bottom: 10px; /* Added bottom margin */
     }
     
     .mobile-main-button {
         font-family: "Delius", cursive;
-        font-size: 16px; /* Slightly larger font */
-        padding: 16px 20px; /* Increased padding */
+        font-size: 14px; /* Smaller font size */
+        padding: 12px 16px; /* Smaller padding */
         border: 2px solid #1f4d2d;
         border-radius: 10px;
         background: #FFF9F0;
@@ -523,12 +523,12 @@ button:hover {
 
 @media (max-width: 480px) {
     h1 {
-        font-size: 28px; /* Increased from 24px */
+        font-size: 26px; /* Slightly smaller but still bigger than original */
     }
     
     .mobile-main-button {
-        font-size: 15px; /* Increased from 14px */
-        padding: 14px 18px; /* Increased padding */
+        font-size: 13px; /* Smaller font */
+        padding: 10px 14px; /* Smaller padding */
     }
     
     #draw-area {
@@ -550,7 +550,7 @@ button:hover {
     }
     
     .pond {
-        max-width: 90%;
+        max-width: 95%; /* Back to original size */
     }
 }
 
