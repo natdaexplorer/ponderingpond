@@ -8,6 +8,10 @@
 <style>
 * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 body {
@@ -76,6 +80,7 @@ h1 {
     flex-direction: column;
     align-items: center;
     cursor: pointer;
+    position: relative;
 }
 
 .gallery-item:hover {
@@ -195,19 +200,65 @@ h1 {
         items.forEach(item => {
             const galleryItem = document.createElement('div');
             galleryItem.className = 'gallery-item';
-            galleryItem.innerHTML = `
-                <img src="${item.img}" alt="Pond Drawing">
-            `;
+            galleryItem.setAttribute('data-id', item.id);
+            
+            const img = document.createElement('img');
+            img.src = item.img;
+            img.alt = 'Pond Drawing';
+            
+            galleryItem.appendChild(img);
+            
+            // Add triple tap/click deletion for gallery items
+            let tapCount = 0;
+            let lastTapTime = 0;
+            
+            function handleDeletion(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const currentTime = new Date().getTime();
+                if (currentTime - lastTapTime > 1000) {
+                    tapCount = 0;
+                }
+                
+                tapCount++;
+                lastTapTime = currentTime;
+                
+                if (tapCount >= 3) {
+                    deleteDrawing(item.id);
+                    tapCount = 0;
+                }
+            }
+            
+            // Add both click and touch events for all devices
+            galleryItem.addEventListener('click', handleDeletion);
+            galleryItem.addEventListener('touchstart', handleDeletion, { passive: false });
+            
             container.appendChild(galleryItem);
         });
+    }
+
+    function deleteDrawing(id) {
+        let items = JSON.parse(localStorage.getItem('pondItems') || '[]');
+        items = items.filter(item => item.id !== id);
+        localStorage.setItem('pondItems', JSON.stringify(items));
+        
+        // Remove from gallery display
+        const galleryItem = document.querySelector(`.gallery-item[data-id="${id}"]`);
+        if (galleryItem) {
+            galleryItem.style.transition = 'opacity 0.3s, transform 0.3s';
+            galleryItem.style.opacity = '0';
+            galleryItem.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                galleryItem.remove();
+                // Reload gallery to ensure consistency
+                loadGalleryItems();
+            }, 300);
+        }
     }
 
     // Load gallery when page loads
     document.addEventListener('DOMContentLoaded', loadGalleryItems);
 
     // Update gallery if items change while page is open
-    window.addEventListener('storage', loadGalleryItems);
-    window.addEventListener('focus', loadGalleryItems);
-    </script>
-</body>
-</html>
+    window.addEventListener('storage', loadGalleryItems
