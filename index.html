@@ -869,12 +869,12 @@ function generateDrawingId() {
 
 // Get random position within the pond boundaries with collision detection
 function getRandomPondPosition(existingItems = []) {
-    // Tighter boundaries to keep drawings inside pond
+    // Tighter boundaries to keep drawings inside pond - adjusted for your pond shape
     const pondArea = {
-        left: 20,    // Increased from 15
-        right: 80,   // Reduced from 85  
-        top: 25,     // Increased from 20
-        bottom: 75   // Reduced from 80
+        left: 25,    // Increased from 20 to keep away from left edge
+        right: 75,   // Reduced from 80 to keep away from right edge  
+        top: 30,     // Increased from 25 to keep away from top edge
+        bottom: 70   // Reduced from 75 to keep away from bottom edge
     };
     
     let attempts = 0;
@@ -888,7 +888,7 @@ function getRandomPondPosition(existingItems = []) {
         let tooClose = false;
         for (const item of existingItems) {
             const distance = Math.sqrt(Math.pow(item.x - x, 2) + Math.pow(item.y - y, 2));
-            if (distance < 10) { // Increased minimum distance
+            if (distance < 8) { // Reduced minimum distance to allow more drawings
                 tooClose = true;
                 break;
             }
