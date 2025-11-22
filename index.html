@@ -86,7 +86,6 @@ h1 {
     border-radius: 12px;
     transform: translate(-50%, -50%) scale(0);
     animation: pop 0.8s ease-out forwards;
-    /* Remove floating animation - drawings stick to pond */
 }
 
 @keyframes pop {
@@ -225,6 +224,13 @@ button {
 button:hover {
     transform: scale(1.03);
     background: #e8f4ea;
+}
+
+.adding-message {
+    color: #1f4d2d;
+    font-size: 16px;
+    height: 20px;
+    margin-top: 5px;
 }
 
 /* Gallery Link - Desktop */
@@ -427,6 +433,10 @@ button:hover {
         font-size: 20px;
         min-height: 50px;
     }
+    
+    .adding-message {
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -545,7 +555,8 @@ button:hover {
                 <canvas id="draw-area"></canvas>
                 <button class="redo-button" onclick="clearCanvas()" title="Clear canvas">↺</button>
                 <div class="button-group">
-                    <button onclick="addToPond()">🐟 Add to Pond</button>
+                    <button onclick="addToPond()" id="addButton">🐟 Add to Pond</button>
+                    <div class="adding-message" id="addingMessage"></div>
                 </div>
             </div>
         </div>
@@ -727,6 +738,37 @@ function typeWithPauses() {
     type();
 }
 
+// Show adding message
+function showAddingMessage() {
+    const messageElement = document.getElementById('addingMessage');
+    const addButton = document.getElementById('addButton');
+    
+    // Disable button during process
+    addButton.disabled = true;
+    addButton.style.opacity = '0.7';
+    
+    let dots = 0;
+    const maxDots = 3;
+    
+    function animateDots() {
+        dots = (dots + 1) % (maxDots + 1);
+        messageElement.textContent = 'Adding' + '.'.repeat(dots);
+        
+        if (dots < maxDots) {
+            setTimeout(animateDots, 500);
+        } else {
+            // Clear message and re-enable button after animation completes
+            setTimeout(() => {
+                messageElement.textContent = '';
+                addButton.disabled = false;
+                addButton.style.opacity = '1';
+            }, 500);
+        }
+    }
+    
+    animateDots();
+}
+
 // ADD TO POND - Improved to capture only drawing
 async function addToPond() {
     // Check if canvas is blank
@@ -734,6 +776,9 @@ async function addToPond() {
         typeWithPauses();
         return;
     }
+    
+    // Show adding message
+    showAddingMessage();
     
     // Create a temporary canvas to extract only the drawing
     const tempCanvas = document.createElement('canvas');
@@ -801,15 +846,17 @@ async function addToPond() {
     });
     localStorage.setItem('pondItems', JSON.stringify(items));
     
-    alert("Added to Pond!");
     clearCanvas();
     
     // On mobile, hide tools and show pond after adding
     if (window.innerWidth <= 768) {
-        hideDrawingTools();
+        setTimeout(() => {
+            hideDrawingTools();
+            loadPondItems();
+        }, 1000);
+    } else {
+        loadPondItems();
     }
-    
-    loadPondItems();
 }
 
 // LOAD POND ITEMS - Live updates
