@@ -2,68 +2,254 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Gallery of Lost & Found</title>
+<title>Nat's Pondering Pond</title>
 <link href="https://fonts.googleapis.com/css2?family=Delius&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: "Delius", cursive;
     background: #FFF9F0;
-    padding: 30px;
+    margin: 0;
+    padding: 0;
     text-align: center;
+    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    padding: 15px 0;
+    flex-shrink: 0;
 }
 
 h1 {
-    font-size: 48px;
+    font-size: 36px;
     color: #1f4d2d;
-    margin-bottom: 10px;
+    margin: 0;
+    text-align: center;
+    font-weight: bold;
 }
 
-#itemCount {
-    font-size: 26px;
-    margin-bottom: 30px;
-    color: #1f4d2d;
-}
-
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 180px);
-    gap: 25px;
+/* Main Content - Desktop */
+.main-content {
+    display: flex;
     justify-content: center;
-    margin-bottom: 60px;
+    align-items: flex-start;
+    gap: 60px;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex: 1;
 }
 
-.gallery-item {
-    background: white;
-    padding: 12px;
-    border-radius: 12px;
-    border: 2px solid #1f4d2d;
-    transition: transform 0.2s;
+/* Pond Section - Centered and larger */
+.pond-section {
+    flex: 2;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pond-wrapper {
     position: relative;
-    overflow: hidden;
+    width: 100%;
 }
 
-.gallery-item:hover {
-    transform: scale(1.03);
+.pond {
+    width: 100%;
+    max-width: 700px;
+    animation: float 4s ease-in-out infinite;
+    transform-origin: center;
 }
 
-.gallery-item img {
-    width: 160px;
-    height: 160px;
-    object-fit: contain;
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.drawing-container img {
+    position: absolute;
+    width: 60px;
+    transform: translate(-50%, -50%) scale(0);
+    animation: pop 0.8s ease-out forwards, float-with-pond 4s ease-in-out infinite;
+}
+
+@keyframes pop {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes float-with-pond {
+    0%, 100% {
+        transform: translate(-50%, -50%) translateY(0);
+    }
+    50% {
+        transform: translate(-50%, -50%) translateY(-10px);
+    }
+}
+
+/* Tools Section - Desktop */
+.tools-section {
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    margin-top: 50px;
+    flex-shrink: 0;
+}
+
+.tool-title {
+    font-size: 20px;
+    color: #1f4d2d;
+    margin: 0;
+    text-align: center;
+    line-height: 1.3;
+    font-weight: normal;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tools-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.color-palette {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    height: 200px;
+    justify-content: space-between;
+}
+
+.color-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid black;
+    transition: transform 0.3s;
+}
+
+.color-dot.selected {
+    transform: scale(1.3);
+    border: 2px solid #333;
+    box-shadow: 0 0 6px rgba(0,0,0,0.3);
+}
+
+.color-dot:hover {
+    transform: scale(1.15);
+}
+
+.canvas-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+#draw-area {
+    width: 200px;
+    height: 200px;
+    background: #FFF9F0;
+    border: 2px dashed #444;
+    cursor: crosshair;
+    touch-action: none;
+}
+
+/* Redo button inside canvas */
+.redo-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.redo-button:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
+}
+
+button {
+    cursor: pointer;
+    font-family: "Delius", cursive;
+    font-size: 14px;
+    padding: 8px 16px;
+    border: 2px solid #1f4d2d;
     border-radius: 8px;
+    background: #FFF9F0;
+    transition: transform 0.2s, background 0.3s;
+    width: 160px;
 }
 
-.back-link {
+button:hover {
+    transform: scale(1.03);
+    background: #e8f4ea;
+}
+
+.adding-message {
+    color: #1f4d2d;
+    font-size: 16px;
+    height: 20px;
+    margin-top: 5px;
+}
+
+/* Gallery Link - Desktop */
+.gallery-link {
     position: fixed;
     bottom: 30px;
-    left: 30px;
-    padding: 10px 16px;
-    font-size: 18px;
+    right: 30px;
+    padding: 10px 20px;
+    font-size: 15px;
     text-decoration: none;
-    border: 3px solid #1f4d2d;
-    border-radius: 12px;
+    border: 2px solid #1f4d2d;
+    border-radius: 8px;
     background: #FFF9F0;
     color: #1f4d2d;
     display: inline-flex;
@@ -72,45 +258,258 @@ h1 {
     transition: transform 0.2s, background 0.3s;
 }
 
-.back-link:hover {
-    transform: scale(1.05);
+.gallery-link:hover {
+    transform: scale(1.03);
     background: #e8f4ea;
 }
 
-.empty-message {
-    font-size: 28px;
-    color: #666;
-    margin: 40px 0;
-}
-
-/* Mobile Styles for Gallery */
+/* Mobile Styles */
 @media (max-width: 768px) {
     body {
-        padding: 20px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    .header {
+        padding: 15px 0;
+        flex-shrink: 0;
+        height: 12vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     h1 {
-        font-size: 36px;
+        font-size: 28px;
+        margin: 0;
+        font-weight: bold;
     }
     
-    #itemCount {
-        font-size: 22px;
+    .main-content {
+        flex-direction: column;
+        gap: 0;
+        padding: 0;
+        margin: 0;
+        flex: 1;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        height: 88vh;
     }
     
-    .gallery-grid {
-        grid-template-columns: repeat(auto-fill, 150px);
-        gap: 20px;
+    .pond-section {
+        max-width: 100%;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        height: 55vh;
     }
     
-    .gallery-item img {
-        width: 130px;
-        height: 130px;
+    .pond-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
-    .back-link {
-        position: static;
-        margin-top: 20px;
-        display: inline-block;
+    .pond {
+        max-width: 90%;
+        width: auto;
+        height: auto;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    
+    .drawing-container img {
+        width: 50px;
+    }
+    
+    .tools-section {
+        width: 100%;
+        margin-top: 0;
+        display: none;
+        background: rgba(255, 255, 255, 0.98);
+        padding: 20px;
+        margin: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    /* Mobile buttons container - positioned higher */
+    .mobile-buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+        flex-shrink: 0;
+        padding: 15px 20px;
+        height: 33vh;
+        justify-content: flex-start;
+    }
+    
+    .mobile-main-button {
+        font-family: "Delius", cursive;
+        font-size: 15px;
+        padding: 14px 18px;
+        border: 2px solid #1f4d2d;
+        border-radius: 10px;
+        background: #FFF9F0;
+        color: #1f4d2d;
+        cursor: pointer;
+        transition: transform 0.2s, background 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .mobile-main-button:hover {
+        transform: scale(1.02);
+        background: #e8f4ea;
+    }
+    
+    /* Hide desktop gallery link on mobile */
+    .gallery-link {
+        display: none;
+    }
+    
+    /* Show tools when mobile main button is clicked */
+    .tools-section.mobile-visible {
+        display: flex;
+    }
+    
+    .mobile-buttons-container.hidden {
+        display: none;
+    }
+    
+    .pond-section.hidden {
+        display: none;
+    }
+    
+    /* Adjust tools for mobile - centered */
+    .tools-container {
+        flex-direction: column;
+        gap: 25px;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .color-palette {
+        flex-direction: row;
+        height: auto;
+        gap: 15px;
+        justify-content: center;
+    }
+    
+    #draw-area {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .button-group {
+        width: 250px;
+    }
+    
+    button {
+        width: 180px;
+        font-size: 15px;
+        padding: 10px 16px;
+    }
+    
+    .tool-title {
+        font-size: 20px;
+        min-height: 50px;
+    }
+    
+    .adding-message {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 24px;
+    }
+    
+    .mobile-main-button {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+    
+    #draw-area {
+        width: 220px;
+        height: 220px;
+    }
+    
+    .color-palette {
+        gap: 12px;
+    }
+    
+    .color-dot {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .mobile-buttons-container {
+        max-width: 280px;
+    }
+    
+    .pond {
+        max-width: 95%;
+    }
+}
+
+/* Close button for mobile */
+.close-tools {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #1f4d2d;
+    width: auto;
+    padding: 5px;
+    display: none;
+}
+
+.close-tools:hover {
+    background: none;
+    transform: scale(1.1);
+}
+
+/* Show close button only on mobile */
+@media (max-width: 768px) {
+    .close-tools {
+        display: block;
+    }
+}
+
+/* Hide mobile buttons on desktop */
+@media (min-width: 769px) {
+    .mobile-buttons-container {
+        display: none !important;
     }
 }
 </style>
@@ -118,144 +517,459 @@ h1 {
 
 <body>
 
-<h1>Gallery of Lost & Found</h1>
-<div id="itemCount">Number of Items: 0</div>
+<!-- Header -->
+<div class="header">
+    <h1>Nat's Pondering Pond</h1>
+</div>
 
-<div id="galleryGrid" class="gallery-grid"></div>
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Left: Pond (centered and dominant) -->
+    <div class="pond-section" id="pondSection">
+        <div class="pond-wrapper">
+            <img src="pond.png" class="pond" alt="Pond">
+            <div id="pondDrawings" class="drawing-container"></div>
+        </div>
+    </div>
 
-<a href="index.html" class="back-link">← Back to Pond</a>
+    <!-- Mobile Buttons Container (Hidden on Desktop) - ONLY ONE GALLERY BUTTON -->
+    <div class="mobile-buttons-container" id="mobileButtons">
+        <button class="mobile-main-button" onclick="showDrawingTools()">
+            🎨 Drop Something Into Our Pond
+        </button>
+        <!-- REMOVED duplicate gallery button -->
+    </div>
+
+    <!-- Right: Tools -->
+    <div class="tools-section" id="toolsSection">
+        <button class="close-tools" onclick="hideDrawingTools()">×</button>
+        <h2 class="tool-title" id="toolTitle">Drop Something Into Our Pond?</h2>
+        
+        <div class="tools-container">
+            <!-- Colors -->
+            <div class="color-palette">
+                <div class="color-dot selected" style="background:#c43a3a" onclick="selectColor('#c43a3a', this)"></div>
+                <div class="color-dot" style="background:#f57c00" onclick="selectColor('#f57c00', this)"></div>
+                <div class="color-dot" style="background:#f9d66b" onclick="selectColor('#f9d66b', this)"></div>
+                <div class="color-dot" style="background:#f9a7c1" onclick="selectColor('#f9a7c1', this)"></div>
+                <div class="color-dot" style="background:#1f4d2d" onclick="selectColor('#1f4d2d', this)"></div>
+            </div>
+
+            <!-- Canvas and buttons -->
+            <div class="canvas-container">
+                <canvas id="draw-area"></canvas>
+                <button class="redo-button" onclick="clearCanvas()" title="Clear canvas">↺</button>
+                <div class="button-group">
+                    <button onclick="addToPond()" id="addButton">🐟 Add to Pond</button>
+                    <div class="adding-message" id="addingMessage"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gallery Link - Desktop -->
+<a href="gallery.html" class="gallery-link">🖼️ Gallery of Lost & Found</a>
 
 <script>
-// Track loaded drawing IDs
-let loadedGalleryIds = new Set();
+// DRAWING LOGIC
+const canvas = document.getElementById("draw-area");
+const ctx = canvas.getContext("2d");
 
-// Load gallery items
-async function loadGallery() {
-    const items = JSON.parse(localStorage.getItem('pondItems') || '[]');
+// Set canvas size based on device
+function setupCanvas() {
+    if (window.innerWidth <= 768) {
+        // Mobile
+        canvas.width = 250;
+        canvas.height = 250;
+    } else {
+        // Desktop
+        canvas.width = 200;
+        canvas.height = 200;
+    }
     
-    document.getElementById("itemCount").innerText = "Number of Items: " + items.length;
+    // Set initial canvas background
+    ctx.fillStyle = '#FFF9F0';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.lineWidth = 12;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+}
 
-    const grid = document.getElementById("galleryGrid");
+setupCanvas();
+
+let drawing = false;
+let currentColor = "#c43a3a";
+let hasDrawing = false;
+let loadedDrawingIds = new Set(); // Track which drawings we've loaded
+
+function selectColor(color, element) {
+    currentColor = color;
     
-    // Find new items that haven't been loaded yet
-    const newItems = items.filter(item => !loadedGalleryIds.has(item.id));
+    // Remove selected class from all color dots
+    document.querySelectorAll('.color-dot').forEach(dot => {
+        dot.classList.remove('selected');
+    });
     
-    if (items.length === 0) {
-        grid.innerHTML = '<div class="empty-message">The gallery is empty. Add some drawings to the pond first!</div>';
+    // Add selected class to clicked color dot
+    element.classList.add('selected');
+}
+
+// Mouse events for desktop
+canvas.addEventListener("mousedown", startDrawing);
+canvas.addEventListener("mouseup", stopDrawing);
+canvas.addEventListener("mouseout", stopDrawing);
+canvas.addEventListener("mousemove", draw);
+
+// Touch events for mobile
+canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
+canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
+canvas.addEventListener("touchend", handleTouchEnd);
+
+function startDrawing(e) {
+    drawing = true;
+    hasDrawing = true;
+    ctx.beginPath();
+    const pos = getMousePos(e);
+    ctx.moveTo(pos.x, pos.y);
+    draw(e);
+}
+
+function stopDrawing() {
+    drawing = false;
+    ctx.beginPath();
+}
+
+function draw(e) {
+    if (!drawing) return;
+    
+    const pos = getMousePos(e);
+    
+    ctx.strokeStyle = currentColor;
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    hasDrawing = true;
+}
+
+function getMousePos(e) {
+    const rect = canvas.getBoundingClientRect();
+    let x, y;
+    
+    if (e.type.includes('touch')) {
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+    } else {
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+    }
+    
+    // Scale coordinates for high DPI displays
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    return {
+        x: x * scaleX,
+        y: y * scaleY
+    };
+}
+
+// Touch event handlers
+function handleTouchStart(e) {
+    e.preventDefault();
+    drawing = true;
+    hasDrawing = true;
+    ctx.beginPath();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent("mousedown", {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+    });
+    canvas.dispatchEvent(mouseEvent);
+}
+
+function handleTouchMove(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent("mousemove", {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+    });
+    canvas.dispatchEvent(mouseEvent);
+}
+
+function handleTouchEnd(e) {
+    e.preventDefault();
+    const mouseEvent = new MouseEvent("mouseup", {});
+    canvas.dispatchEvent(mouseEvent);
+}
+
+// Clear canvas function
+function clearCanvas() {
+    ctx.fillStyle = '#FFF9F0';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    hasDrawing = false;
+}
+
+// Check if canvas is blank
+function isCanvasBlank() {
+    const blank = document.createElement('canvas');
+    blank.width = canvas.width;
+    blank.height = canvas.height;
+    const blankCtx = blank.getContext('2d');
+    blankCtx.fillStyle = '#FFF9F0';
+    blankCtx.fillRect(0, 0, blank.width, blank.height);
+    
+    return canvas.toDataURL() === blank.toDataURL();
+}
+
+// Type text with pauses
+function typeWithPauses() {
+    const toolTitle = document.getElementById('toolTitle');
+    const message = "That's not a drawing. Try again?";
+    
+    toolTitle.innerHTML = '';
+    
+    let i = 0;
+    function type() {
+        if (i < message.length) {
+            toolTitle.innerHTML += message.charAt(i);
+            i++;
+            setTimeout(type, 80);
+        } else {
+            setTimeout(() => {
+                toolTitle.innerHTML = "Drop Something Into Our Pond?";
+            }, 2000);
+        }
+    }
+    type();
+}
+
+// Show adding message and replace button text
+function showAddingMessage() {
+    const addButton = document.getElementById('addButton');
+    
+    // Replace button text with "Adding..."
+    addButton.textContent = "Adding...";
+    addButton.disabled = true;
+    addButton.style.opacity = '0.7';
+    
+    let dots = 0;
+    const maxDots = 3;
+    
+    function animateDots() {
+        dots = (dots + 1) % (maxDots + 1);
+        addButton.textContent = "Adding" + '.'.repeat(dots);
+        
+        if (dots < maxDots) {
+            setTimeout(animateDots, 500);
+        } else {
+            // Restore original button text and re-enable
+            setTimeout(() => {
+                addButton.textContent = "🐟 Add to Pond";
+                addButton.disabled = false;
+                addButton.style.opacity = '1';
+            }, 500);
+        }
+    }
+    
+    animateDots();
+}
+
+// Get random position within the light blue pond area
+function getRandomPondPosition() {
+    const pondArea = {
+        left: 20,
+        right: 80,  
+        top: 25,
+        bottom: 75
+    };
+    
+    return {
+        x: Math.random() * (pondArea.right - pondArea.left) + pondArea.left,
+        y: Math.random() * (pondArea.bottom - pondArea.top) + pondArea.top
+    };
+}
+
+// Generate unique ID for each drawing
+function generateDrawingId() {
+    return 'drawing_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+// ADD TO POND
+async function addToPond() {
+    // Check if canvas is blank
+    if (isCanvasBlank()) {
+        typeWithPauses();
         return;
     }
+    
+    // Show adding message
+    showAddingMessage();
+    
+    // Create a temporary canvas to extract only the drawing
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    
+    // Fill with transparent background
+    tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+    
+    // Create a white background to compare against
+    const whiteCanvas = document.createElement('canvas');
+    whiteCanvas.width = canvas.width;
+    whiteCanvas.height = canvas.height;
+    const whiteCtx = whiteCanvas.getContext('2d');
+    whiteCtx.fillStyle = '#FFF9F0';
+    whiteCtx.fillRect(0, 0, whiteCanvas.width, whiteCanvas.height);
+    
+    // Get image data from both canvases
+    const originalData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const whiteData = whiteCtx.getImageData(0, 0, whiteCanvas.width, whiteCanvas.height);
+    
+    // Create new image data for transparent background
+    const newData = tempCtx.createImageData(canvas.width, canvas.height);
+    
+    // Compare pixels and only keep non-white pixels
+    for (let i = 0; i < originalData.data.length; i += 4) {
+        const r1 = originalData.data[i];
+        const g1 = originalData.data[i + 1];
+        const b1 = originalData.data[i + 2];
+        
+        const r2 = whiteData.data[i];
+        const g2 = whiteData.data[i + 1];
+        const b2 = whiteData.data[i + 2];
+        
+        // If pixel is different from white background, keep it
+        if (r1 !== r2 || g1 !== g2 || b1 !== b2) {
+            newData.data[i] = r1;
+            newData.data[i + 1] = g1;
+            newData.data[i + 2] = b1;
+            newData.data[i + 3] = 255;
+        }
+    }
+    
+    tempCtx.putImageData(newData, 0, 0);
+    
+    const imgData = tempCanvas.toDataURL('image/png');
+    
+    let items = JSON.parse(localStorage.getItem('pondItems') || '[]');
+    
+    // Get position within the light blue pond area
+    const position = getRandomPondPosition();
+    
+    const newItem = {
+        id: generateDrawingId(),
+        img: imgData,
+        x: position.x,
+        y: position.y,
+        timestamp: Date.now()
+    };
+    
+    items.push(newItem);
+    localStorage.setItem('pondItems', JSON.stringify(items));
+    
+    clearCanvas();
+    
+    // Add the new drawing immediately
+    addSingleDrawing(newItem);
+    
+    // On mobile, hide tools and show pond after adding
+    if (window.innerWidth <= 768) {
+        setTimeout(() => {
+            hideDrawingTools();
+        }, 1500);
+    }
+}
 
+// Add a single drawing to the pond
+function addSingleDrawing(item) {
+    const container = document.getElementById("pondDrawings");
+    let img = document.createElement("img");
+    img.src = item.img;
+    img.style.left = item.x + "%";
+    img.style.top = item.y + "%";
+    img.setAttribute('data-id', item.id);
+    
+    // Add click handler for desktop deletion (3 clicks)
+    if (window.innerWidth > 768) {
+        let clickCount = 0;
+        img.addEventListener('click', function() {
+            clickCount++;
+            if (clickCount >= 3) {
+                deleteDrawing(item.id);
+                clickCount = 0;
+            }
+        });
+    }
+    
+    container.appendChild(img);
+    loadedDrawingIds.add(item.id);
+}
+
+// Delete drawing by ID
+function deleteDrawing(id) {
+    let items = JSON.parse(localStorage.getItem('pondItems') || '[]');
+    items = items.filter(item => item.id !== id);
+    localStorage.setItem('pondItems', JSON.stringify(items));
+    
+    // Remove from pond display
+    const img = document.querySelector(`img[data-id="${id}"]`);
+    if (img) {
+        img.remove();
+    }
+    
+    loadedDrawingIds.delete(id);
+}
+
+// LOAD POND ITEMS - Only load new items
+async function loadPondItems() {
+    const items = JSON.parse(localStorage.getItem('pondItems') || '[]');
+    const container = document.getElementById("pondDrawings");
+    
+    // Find new items that haven't been loaded yet
+    const newItems = items.filter(item => !loadedDrawingIds.has(item.id));
+    
     if (newItems.length > 0) {
         newItems.forEach((item, index) => {
             setTimeout(() => {
-                const box = document.createElement("div");
-                box.className = "gallery-item";
-                box.setAttribute('data-id', item.id);
-                
-                box.innerHTML = `
-                    <img src="${item.img}" alt="User drawing">
-                `;
-                
-                // Add click handler for desktop deletion (3 clicks)
-                if (window.innerWidth > 768) {
-                    let clickCount = 0;
-                    box.addEventListener('click', function() {
-                        clickCount++;
-                        if (clickCount >= 3) {
-                            deleteItem(item.id);
-                            clickCount = 0;
-                        }
-                    });
-                }
-                
-                // Add touch events for mobile swipe detection
-                setupSwipeDetection(box, item.id);
-                grid.appendChild(box);
-                loadedGalleryIds.add(item.id);
-            }, index * 300);
+                addSingleDrawing(item);
+            }, index * 400); // Stagger the pop-up animations
         });
     }
 }
 
-// Setup swipe detection for gallery items
-function setupSwipeDetection(element, id) {
-    let startX = 0;
-    let currentX = 0;
-    let isSwiping = false;
-    let swipeCount = 0;
+// Mobile functionality
+function showDrawingTools() {
+    const toolsSection = document.getElementById('toolsSection');
+    const mobileButtons = document.getElementById('mobileButtons');
+    const pondSection = document.getElementById('pondSection');
     
-    element.addEventListener('touchstart', (e) => {
-        startX = e.touches[0].clientX;
-        isSwiping = true;
-    });
-    
-    element.addEventListener('touchmove', (e) => {
-        if (!isSwiping) return;
-        currentX = e.touches[0].clientX;
-        
-        // Calculate swipe distance
-        const swipeDistance = Math.abs(currentX - startX);
-        
-        // If swipe is significant, count it
-        if (swipeDistance > 50) {
-            // Reset position for next swipe
-            startX = currentX;
-            
-            // Increment swipe count
-            swipeCount++;
-            
-            // Visual feedback (subtle)
-            element.style.transform = `scale(${1 - (swipeCount * 0.05)})`;
-            
-            // Check if reached required swipes
-            if (swipeCount >= 3) {
-                deleteItem(id);
-            }
-        }
-    });
-    
-    element.addEventListener('touchend', () => {
-        isSwiping = false;
-        // Reset transform after a delay
-        setTimeout(() => {
-            if (swipeCount < 3) {
-                element.style.transform = 'scale(1)';
-            }
-        }, 300);
-    });
+    toolsSection.classList.add('mobile-visible');
+    mobileButtons.classList.add('hidden');
+    pondSection.classList.add('hidden');
 }
 
-// Delete item function
-async function deleteItem(id) {
-    let items = JSON.parse(localStorage.getItem('pondItems') || '[]');
+function hideDrawingTools() {
+    const toolsSection = document.getElementById('toolsSection');
+    const mobileButtons = document.getElementById('mobileButtons');
+    const pondSection = document.getElementById('pondSection');
     
-    // Remove the item
-    items = items.filter(item => item.id !== id);
-    localStorage.setItem('pondItems', JSON.stringify(items));
-    
-    // Remove from loaded IDs
-    loadedGalleryIds.delete(id);
-    
-    // Remove from DOM
-    const element = document.querySelector(`[data-id="${id}"]`);
-    if (element) {
-        element.remove();
-    }
-    
-    // Update count
-    document.getElementById("itemCount").innerText = "Number of Items: " + items.length;
-    
-    // Show empty message if no items left
-    if (items.length === 0) {
-        document.getElementById("galleryGrid").innerHTML = '<div class="empty-message">The gallery is empty. Add some drawings to the pond first!</div>';
-    }
+    toolsSection.classList.remove('mobile-visible');
+    mobileButtons.classList.remove('hidden');
+    pondSection.classList.remove('hidden');
 }
 
-// Auto-refresh gallery every 2 seconds to show new drawings
-setInterval(loadGallery, 2000);
+// Handle window resize
+window.addEventListener('resize', function() {
+    setupCanvas();
+});
 
-// Initial load
-loadGallery();
+// Initialize
+loadPondItems();
+
+// Live updates - check for new drawings every 2 seconds
+setInterval(loadPondItems, 2000);
 </script>
 </body>
 </html>
