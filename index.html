@@ -1019,7 +1019,7 @@ async function addToPond() {
     tempCtx.putImageData(newData, 0, 0);
     
     // COMPRESSION: Use JPEG with 80% quality for smaller file size
-    const imgData = tempCanvas.toDataURL('image/jpeg', 0.8);
+    const imgData = tempCanvas.toDataURL('image/png');
     
     // Get existing items for collision detection
     const existingItems = [];
