@@ -1,9 +1,9 @@
 {
   "name": "ponderingpond",
-  "version": "1.0.0",
+  "version": "1.0.0", 
   "type": "module",
   "dependencies": {
-    "@vercel/kv": "^1.0.0"
+    "@vercel/kv": "^0.2.7"
   },
   "scripts": {
     "build": "echo 'No build step needed for static site'"
