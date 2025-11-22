@@ -200,74 +200,79 @@ h1 {
         const countElement = document.getElementById('drawingCount');
         
         try {
-            // Real-time listener for drawings
-            db.collection('drawings')
-                .orderBy('timestamp', 'desc')
-                .onSnapshot((snapshot) => {
-                    const items = [];
-                    snapshot.forEach(doc => {
-                        items.push(doc.data());
-                    });
+            // SIMPLIFIED: Remove timestamp ordering to fix sync issues
+            db.collection('drawings').onSnapshot((snapshot) => {
+                const items = [];
+                snapshot.forEach(doc => {
+                    items.push(doc.data());
+                });
+                
+                // Sort by timestamp client-side if needed
+                items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                
+                // Update count
+                countElement.textContent = `${items.length} drawing${items.length !== 1 ? 's' : ''}`;
+                
+                // Clear container
+                container.innerHTML = '';
+                loadedDrawingIds.clear();
+                
+                if (items.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-gallery">
+                            <h2>The Pond is Empty</h2>
+                            <p>No drawings have been added yet. Go back to the pond and create something!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Add all items
+                items.forEach(item => {
+                    if (loadedDrawingIds.has(item.id)) return;
                     
-                    // Update count
-                    countElement.textContent = `${items.length} drawing${items.length !== 1 ? 's' : ''}`;
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'gallery-item';
+                    galleryItem.setAttribute('data-id', item.id);
                     
-                    // Clear container
-                    container.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = item.img;
+                    img.alt = 'Pond Drawing';
                     
-                    if (items.length === 0) {
-                        container.innerHTML = `
-                            <div class="empty-gallery">
-                                <h2>The Pond is Empty</h2>
-                                <p>No drawings have been added yet. Go back to the pond and create something!</p>
-                            </div>
-                        `;
-                        return;
-                    }
+                    galleryItem.appendChild(img);
                     
-                    // Add all items
-                    items.forEach(item => {
-                        const galleryItem = document.createElement('div');
-                        galleryItem.className = 'gallery-item';
-                        galleryItem.setAttribute('data-id', item.id);
+                    // Add triple tap/click deletion for gallery items
+                    let tapCount = 0;
+                    let lastTapTime = 0;
+                    
+                    function handleDeletion(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
                         
-                        const img = document.createElement('img');
-                        img.src = item.img;
-                        img.alt = 'Pond Drawing';
-                        
-                        galleryItem.appendChild(img);
-                        
-                        // Add triple tap/click deletion for gallery items
-                        let tapCount = 0;
-                        let lastTapTime = 0;
-                        
-                        function handleDeletion(e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            
-                            const currentTime = new Date().getTime();
-                            if (currentTime - lastTapTime > 1000) {
-                                tapCount = 0;
-                            }
-                            
-                            tapCount++;
-                            lastTapTime = currentTime;
-                            
-                            if (tapCount >= 3) {
-                                deleteDrawing(item.id);
-                                tapCount = 0;
-                            }
+                        const currentTime = new Date().getTime();
+                        if (currentTime - lastTapTime > 1000) {
+                            tapCount = 0;
                         }
                         
-                        // Add both click and touch events for all devices
-                        galleryItem.addEventListener('click', handleDeletion);
-                        galleryItem.addEventListener('touchstart', handleDeletion, { passive: false });
+                        tapCount++;
+                        lastTapTime = currentTime;
                         
-                        container.appendChild(galleryItem);
-                    });
-                }, (error) => {
-                    console.error('Error loading gallery:', error);
+                        if (tapCount >= 3) {
+                            deleteDrawing(item.id);
+                            tapCount = 0;
+                        }
+                    }
+                    
+                    // Add both click and touch events for all devices
+                    galleryItem.addEventListener('click', handleDeletion);
+                    galleryItem.addEventListener('touchstart', handleDeletion, { passive: false });
+                    
+                    container.appendChild(galleryItem);
+                    loadedDrawingIds.add(item.id);
                 });
+            }, (error) => {
+                console.error('Error loading gallery:', error);
+            });
         } catch (error) {
             console.error('Error setting up gallery:', error);
         }
