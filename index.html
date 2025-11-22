@@ -499,11 +499,6 @@ button:hover {
     .adding-message {
         font-size: 14px;
     }
-    
-    /* Show Instagram warning on mobile */
-    .instagram-warning {
-        display: block;
-    }
 }
 
 @media (max-width: 480px) {
@@ -656,7 +651,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Detect Instagram browser
+// Detect Instagram browser - ONLY show warning in Instagram
 function isInstagramBrowser() {
     return /Instagram/.test(navigator.userAgent);
 }
@@ -848,11 +843,12 @@ function generateDrawingId() {
 
 // Get random position within the pond boundaries with collision detection
 function getRandomPondPosition(existingItems = []) {
+    // Tighter boundaries to keep drawings inside pond
     const pondArea = {
-        left: 15,
-        right: 85,  
-        top: 20,
-        bottom: 80
+        left: 20,    // Increased from 15
+        right: 80,   // Reduced from 85  
+        top: 25,     // Increased from 20
+        bottom: 75   // Reduced from 80
     };
     
     let attempts = 0;
@@ -866,7 +862,7 @@ function getRandomPondPosition(existingItems = []) {
         let tooClose = false;
         for (const item of existingItems) {
             const distance = Math.sqrt(Math.pow(item.x - x, 2) + Math.pow(item.y - y, 2));
-            if (distance < 8) { // Minimum distance between drawings
+            if (distance < 10) { // Increased minimum distance
                 tooClose = true;
                 break;
             }
@@ -886,10 +882,10 @@ function getRandomPondPosition(existingItems = []) {
     };
 }
 
-// FIREBASE FUNCTIONS
+// FIREBASE FUNCTIONS - SIMPLIFIED
 async function loadPondItems() {
     try {
-        const snapshot = await db.collection('drawings').orderBy('timestamp', 'desc').get();
+        const snapshot = await db.collection('drawings').get();
         const container = document.getElementById("pondDrawings");
         
         snapshot.forEach(doc => {
@@ -903,24 +899,22 @@ async function loadPondItems() {
     }
 }
 
-// Real-time listener for new drawings
+// Real-time listener for new drawings - SIMPLIFIED
 function setupRealTimeListener() {
-    db.collection('drawings')
-        .orderBy('timestamp', 'desc')
-        .onSnapshot((snapshot) => {
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    const item = change.doc.data();
-                    if (!loadedDrawingIds.has(item.id)) {
-                        addSingleDrawing(item);
-                    }
+    db.collection('drawings').onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+            if (change.type === 'added') {
+                const item = change.doc.data();
+                if (!loadedDrawingIds.has(item.id)) {
+                    addSingleDrawing(item);
                 }
-                if (change.type === 'removed') {
-                    const item = change.doc.data();
-                    removeDrawingFromDisplay(item.id);
-                }
-            });
+            }
+            if (change.type === 'removed') {
+                const item = change.doc.data();
+                removeDrawingFromDisplay(item.id);
+            }
         });
+    });
 }
 
 // ADD TO POND
@@ -983,7 +977,7 @@ async function addToPond() {
         img: imgData,
         x: position.x,
         y: position.y,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        timestamp: Date.now() // Use client timestamp instead of server timestamp
     };
     
     try {
